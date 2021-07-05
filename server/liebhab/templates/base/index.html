@@ -1,0 +1,90 @@
+{% extends "base/base.html" %} {% block content %}
+
+<div class="row">
+  {% if user.is_authenticated %}
+
+  <h2>Send a new message</h2>
+  <div class="card text-white mb-3">
+    <form method="post" action="/">
+    {% csrf_token %}
+
+      <h3 class="card-header row">
+        <div class="col">{{ user.get_username }}</div>
+        <div class="col">→</div>
+        <div class="form-group col">
+
+          <select class="form-select" name="to_user" >
+            {% for user in user_list %}
+              <option>{{ user.username }}</option>
+            {% endfor %}
+          </select>
+
+        </div>
+      </h3>
+
+      <div class="card-body">
+        <fieldset class="form-group">
+          <label for="exampleTextarea" class="form-label">Add a message</label>
+          <textarea
+            class="form-control"
+            id="exampleTextarea"
+            name="text"
+            type="text"
+            max-length="100"
+            rows="1"
+          ></textarea>
+        </fieldset>
+
+        {% comment %} <fieldset class="form-group mt-1">
+          <label for="customRange3" class="form-label">Duration</label>
+          <input type="range" name="duration" class="form-range" min="0.5" max="5" step="0.01" value="1">
+        </fieldset> {% endcomment %}
+
+        <fieldset class="form-group mt-3">
+          <input type="submit" class="btn btn-primary" value="Submit"/>
+        </fieldset>
+      </div>
+    </form>
+  </div>
+
+    {% load humanize %}
+
+    {% if message_list %}
+
+        <p class="text-muted">10 newest liebhabs:</p>
+
+        {% for message in message_list %}
+            <div class="card mb-3">
+                <h3 class="card-header row">
+                    <div class="col">{{ message.from_user.username }}</div>
+                    <div class="col">→</div>
+                    <div class="col">{{ message.to_user.username }}</div>
+                </h3>
+                <div class="card-body">
+                    <p class="card-text">{{ message.text }}</p>
+                </div>
+                <div class="card-footer text-muted">
+                    {% if message.sent_out %}
+                      <i class="fas fa-check"></i>
+                      &nbsp
+                    {% endif %}
+
+                    {{ message.created_at | naturaltime }} for {{ message.duration }} 
+                </div>
+            </div>
+
+        {% endfor %}
+    {% endif %}
+
+  {% else %}
+
+    <div class="col"></div>
+    <div class="col">
+      <h1>Log in to liebhab</h1>
+    </div>
+    <div class="col"></div>
+
+  {% endif%}
+</div>
+
+{% endblock %}
